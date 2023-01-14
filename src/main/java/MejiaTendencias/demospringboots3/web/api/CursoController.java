@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import MejiaTendencias.demospringboots3.model.Curso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,10 +22,16 @@ public class CursoController {
 
     @GetMapping
     List<Curso> getAll(){
+        List <Curso> cursos= new ArrayList<Curso>();
+        cursos = cursoRepository.findAll();
+        for(Curso cu:cursos){
+            cu.setImagenUrl(s3Service.getObjectUrl(cu.getImagenPath()));
+        }
+        return cursos;/*
         return cursoRepository.findAll()
                 .stream()
                 .peek(curso -> curso.setImagenUrl(s3Service.getObjectUrl(curso.getImagenPath())))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
     }
 
     @PostMapping
@@ -33,4 +40,17 @@ public class CursoController {
         curso.setImagenUrl(s3Service.getObjectUrl(curso.getImagenPath()));
         return curso;
     }
+
+    @DeleteMapping(value = "delete-Object", params = "key")
+    void deleteObject(@RequestParam String key){
+        s3Service.deleteObject(key);
+
+    }
+/*
+    @DeleteMapping(value = "delete-Object", params = "key")
+    void deleteObject(@RequestParam String key){
+
+        s3Service.deleteObject(key);
+    }*/
+
 }

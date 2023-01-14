@@ -3,13 +3,13 @@ cloud:
   aws:
     region:
       auto: false
-      static:  us-east-1
+      static: us-east-1
       use-default-aws-region-chain: true
     stack: false
     stack.auto: false
     credentials:
-      access-key: AKIAYF2BSZYZLK22FMNK
-      secret-key: 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
+      access-key: AKIAYF2BSZYZEJ56SRNM
+      secret-key: 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
 logging:
   level:
     com:

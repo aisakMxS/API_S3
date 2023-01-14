@@ -20,11 +20,16 @@ public class AssetController {
 
     @PostMapping("/upload")
     Map<String, String> upload(@RequestParam MultipartFile file){
+
+        System.out.println("TAMAÑO"+file.getSize());
         String key = s3Service.putObject((file));
 
+
         Map<String, String> result = new HashMap<>();
+
         result.put("key", key);
         result.put("url", s3Service.getObjectUrl(key));
+
 
         return result;
     }
@@ -45,4 +50,6 @@ public class AssetController {
     void deleteObject(@RequestParam String key){
         s3Service.deleteObject(key);
     }
+
+
 }
