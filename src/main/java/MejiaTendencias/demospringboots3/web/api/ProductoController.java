@@ -32,7 +32,12 @@ public class ProductoController {
     @ResponseStatus(HttpStatus.CREATED)
     public Producto save(@RequestParam MultipartFile file,String nombre,String cantidad,String precio){
         Producto pro= new Producto();
-        String key = s3Service.putObject((file));
+        String key="";
+        try {
+            key = s3Service.putObject((file));
+        }catch(Exception e){
+            System.out.println(e);
+        }
         pro.setNombre(nombre);
         pro.setCantidad(cantidad);
         pro.setPrecio(precio);
@@ -40,18 +45,40 @@ public class ProductoController {
         return service.save(pro);
     }
 
-    @GetMapping("/buscarproducto/{id}")
-    public Producto findById(@PathVariable Integer id){
+    @GetMapping("/buscarproducto")
+    public Producto findById(@RequestParam Integer id){
         return service.findById(id);
     }
 
     @DeleteMapping("/borrarproducto")
-    public Producto deleted(@PathVariable Integer id){
+    public Producto deleted(@RequestParam Integer id){
         Producto p=service.findById(id);
         String[] a=p.getUrl().split("/");
-        s3Service.deleteObject(a[a.length-1]);
+        System.out.println(a[a.length-1]);
+        //s3Service.deleteObject(a[a.length-1]);
         service.delete(id);
         return p;
+    }
+
+
+    @PostMapping("/cambiarproducto")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Producto update(@RequestParam Integer id,MultipartFile file,String nombre,String cantidad,String precio){
+        Producto pro= service.findById(id);
+        if (file != null){
+            String key="";
+            try {
+                key = s3Service.putObject((file));
+                pro.setUrl((String) s3Service.getObjectUrl(key));
+            }catch(Exception e){
+                System.out.println(e);
+            }
+        }
+        pro.setId_persona(id);
+        pro.setNombre(nombre);
+        pro.setCantidad(cantidad);
+        pro.setPrecio(precio);
+        return service.save(pro);
     }
 
 
